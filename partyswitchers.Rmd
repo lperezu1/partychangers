@@ -1,0 +1,126 @@
+---
+title: "party-change"
+output: html_document
+date: "2025-12-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## R Markdown
+
+# Load necessary libraries
+```{r}
+install.packages("tidyr") 
+install.packages("writexl")
+library (writexl)
+library(tidyr)
+```
+
+```{r}
+# Load necessary library
+library(dplyr)
+ 
+```  
+
+
+```{r}
+#statewide voter registration file found here: https://www.ncsbe.gov/results-data/voter-registration-data. File was pulled on Dec. 18 
+
+library(data.table)
+
+zip_url <- "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip"
+zip_path <- tempfile(fileext = ".zip")
+
+download.file(zip_url, zip_path, mode = "wb")
+
+# See what's inside the zip
+contents <- unzip(zip_path, list = TRUE)
+contents
+
+csv_path <- unzip(zip_path, files = contents$Name[1])  
+file.info(csv_path)$size
+
+voter_file <- fread(
+  csv_path,
+  sep = "\t",
+  encoding = "UTF-8",
+  showProgress = TRUE
+)
+
+nrow(voter_file)
+ncol(voter_file) 
+```
+
+```{r}
+
+# party change file pulled from here: https://dl.ncsbe.gov/?prefix=data/PartyChange/ 
+
+# pulled the file from 12/1/2025, 6:00:43 AM.  
+
+url <- "https://s3.amazonaws.com/dl.ncsbe.gov/data/PartyChange/2025_party_change_list.csv"
+
+party_change <- read.csv(
+  url,
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+
+
+colnames(party_change) 
+
+``` 
+
+```{r}
+library(data.table)
+
+# Make sure both are data.tables
+setDT(voter_file)
+setDT(party_change)
+
+#inner join: 
+voter_party_only <- voter_file[
+  party_change,
+  on = "voter_reg_num",
+  nomatch = 0 
+  ] 
+
+``` 
+
+```{r}
+uniqueN(party_change$voter_reg_num) 
+
+``` 
+
+```{r} 
+party_latest <- party_change[
+  order(change_dt),
+  .SD[.N],
+  by = voter_reg_num
+]
+
+voter_party_only <- voter_file[
+  party_latest,
+  on = "voter_reg_num",
+  nomatch = 0
+]
+
+nrow(voter_party_only)
+
+``` 
+
+
+
+
+```{r}
+library(data.table)
+
+fwrite(
+  voter_joined,
+  "voter_with_party_changes_2025.csv"
+)
+
+getwd()
+``` 
