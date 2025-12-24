@@ -1,5 +1,5 @@
 # partychangers
-In this project, I am using three databases to identify candidates who may have changed their party affiliation ahead of next year’s primary and general elections.
+In this project, I use three databases to identify candidates who may have changed their party affiliation ahead of next year’s primary and general elections.
 
 
 # The databases are: 
