@@ -58,38 +58,6 @@ nrow(voter_file)
 ncol(voter_file) 
 ```
 
-```{r}
-
-# NC voter history file (NCVHIS) layout:
-
-# tab delimited, last 10 years, point-in-time snapshot.
-
-# Can be linked to ncvoter by ncid (best) or by (county_desc + voter_reg_num).
-
-library(data.table)
-
-zip_url_his <- "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvhis_Statewide.zip"
-zip_path_his <- tempfile(fileext = ".zip")
-
-download.file(zip_url_his, zip_path_his, mode = "wb")
-
-contents_his <- unzip(zip_path_his, list = TRUE)
-contents_his
-
-his_path <- unzip(zip_path_his, files = contents_his$Name[1])
-
-ncvhis <- fread(
-his_path,
-sep = "\t",
-encoding = "UTF-8",
-showProgress = TRUE
-)
-
-#nrow(ncvhis)
-#ncol(ncvhis)
-#names(ncvhis)
-```
-
 
 ```{r}
 # Removing inactive and removed
@@ -116,6 +84,7 @@ party_change <- read.csv(
 ``` 
 
 ```{r}
+# joining the voter registration file with the party change file via the county and voter registration number. 
 library(data.table)
 
 setDT(voter_file)
@@ -138,8 +107,34 @@ setcolorder(
 
 ``` 
 
+```{r}
+library(writexl)
+
+setDT(voter_party_only)
+
+# Order by A → Z
+voter_party_only[, last_name := toupper(trimws(last_name))]
+setorder(voter_party_only, last_name)
+
+
+voter_party_only[, last_initial := substr(last_name, 1, 1)]
+
+# Divide
+voter_party_A_M <- voter_party_only[last_initial <= "M"][, !"last_initial"]
+voter_party_N_Z <- voter_party_only[last_initial >= "N"][, !"last_initial"]
+
+# Check sizes
+nrow(voter_party_A_M)
+nrow(voter_party_N_Z)
+
+
+write_xlsx(voter_party_A_M, "party_voter_change_A_M.xlsx")
+write_xlsx(voter_party_N_Z, "party_voter_change_N_Z.xlsx")
+```
+
 
 ```{r}
+# Download in csv format. 
 library(data.table)
 
 fwrite(
