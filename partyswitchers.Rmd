@@ -15,6 +15,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 install.packages("tidyr") 
 install.packages("writexl")
+install.packages("data.table")
+install.packages("knitr")
+library(data.table)
+library(knitr)
 library (writexl)
 library(tidyr)
 ```
@@ -56,6 +60,44 @@ ncol(voter_file)
 
 ```{r}
 
+# NC voter history file (NCVHIS) layout:
+
+# tab delimited, last 10 years, point-in-time snapshot.
+
+# Can be linked to ncvoter by ncid (best) or by (county_desc + voter_reg_num).
+
+library(data.table)
+
+zip_url_his <- "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvhis_Statewide.zip"
+zip_path_his <- tempfile(fileext = ".zip")
+
+download.file(zip_url_his, zip_path_his, mode = "wb")
+
+contents_his <- unzip(zip_path_his, list = TRUE)
+contents_his
+
+his_path <- unzip(zip_path_his, files = contents_his$Name[1])
+
+ncvhis <- fread(
+his_path,
+sep = "\t",
+encoding = "UTF-8",
+showProgress = TRUE
+)
+
+#nrow(ncvhis)
+#ncol(ncvhis)
+#names(ncvhis)
+```
+
+
+```{r}
+# Removing inactive and removed
+voter_file_cleared <- voter_file[!voter_status_desc %in% c("REMOVED", "INACTIVE")]
+```
+
+```{r}
+
 # party change file pulled from here: https://dl.ncsbe.gov/?prefix=data/PartyChange/ 
 
 # pulled the file from 12/1/2025, 6:00:43 AM.  
@@ -69,56 +111,39 @@ party_change <- read.csv(
 )
 
 
-colnames(party_change) 
+#colnames(party_change) 
 
 ``` 
 
 ```{r}
 library(data.table)
 
-# Make sure both are data.tables
 setDT(voter_file)
 setDT(party_change)
 
-#inner join: 
 voter_party_only <- voter_file[
   party_change,
-  on = "voter_reg_num",
-  nomatch = 0 
-  ] 
-
-``` 
-
-```{r}
-uniqueN(party_change$voter_reg_num) 
-
-``` 
-
-```{r} 
-party_latest <- party_change[
-  order(change_dt),
-  .SD[.N],
-  by = voter_reg_num
-]
-
-voter_party_only <- voter_file[
-  party_latest,
-  on = "voter_reg_num",
+  on = .(county_desc = county_name, voter_reg_num),
   nomatch = 0
 ]
 
-nrow(voter_party_only)
+colnames(voter_party_only) 
+setcolorder(
+  voter_party_only,
+  c("year_change", "party_from", "party_to", "change_dt",
+    setdiff(names(voter_party_only),
+            c("year_change", "party_from", "party_to", "change_dt")))
+)
+
 
 ``` 
-
-
 
 
 ```{r}
 library(data.table)
 
 fwrite(
-  voter_joined,
+  voter_party_only,
   "voter_with_party_changes_2025.csv"
 )
 
