@@ -108,28 +108,199 @@ setcolorder(
 ``` 
 
 ```{r}
-library(writexl)
+# Take all candidates and grabbing just by unique
+candidates <- fread("./Candidate_Listing_2026 (8).csv", encoding = "UTF-8")
 
+setDT(candidates)
+
+candidates[, name_on_ballot := toupper(trimws(name_on_ballot))]
+candidates[, county_name := toupper(trimws(county_name))]
+candidates[, contest_name := toupper(trimws(contest_name))]
+
+total_counties <- uniqueN(candidates$county_name)
+
+candidates_unique <- candidates[
+  ,
+  {
+    row <- .SD[1]
+
+    cand_counties <- sort(unique(na.omit(county_name)))
+
+    row$county_name <- if (length(cand_counties) == total_counties) {
+      "ALL COUNTIES"
+    } else {
+      paste(cand_counties, collapse = ", ")
+    }
+
+    row$contest_name <- paste(
+      sort(unique(na.omit(contest_name))),
+      collapse = ", "
+    )
+
+    row
+  },
+  by = name_on_ballot
+]
+
+nrow(candidates_unique)
+candidates_unique[1:10, .(name_on_ballot, county_name, contest_name)]
+
+
+
+
+```
+
+```{r}
+
+library(data.table)
+
+setDT(candidates_unique)
 setDT(voter_party_only)
 
-# Order by A → Z
-voter_party_only[, last_name := toupper(trimws(last_name))]
-setorder(voter_party_only, last_name)
+
+norm_name <- function(x) toupper(gsub("\\s+", " ", trimws(x)))
+
+candidates_unique[, `:=`(
+  first_name     = norm_name(first_name),
+  last_name      = norm_name(last_name),
+  county_name    = norm_name(county_name),
+  contest_name   = norm_name(contest_name),
+  name_on_ballot = norm_name(name_on_ballot)
+)]
+
+voter_party_only[, `:=`(
+  first_name  = norm_name(first_name),
+  last_name   = norm_name(last_name),
+  county_desc = norm_name(county_desc)
+)]
+
+all_counties <- sort(unique(voter_party_only$county_desc))
+
+cand_expanded <- candidates_unique[
+  ,
+  .(
+    county_name = county_name,
+    county_desc = if (county_name == "ALL COUNTIES") all_counties
+                 else unlist(strsplit(county_name, "\\s*,\\s*"))
+  ),
+  by = .(name_on_ballot, first_name, last_name, contest_name)
+]
+cand_expanded[, county_desc := norm_name(county_desc)]
+
+candidate_party_exact <- voter_party_only[
+  cand_expanded,
+  on = .(county_desc, first_name, last_name),
+  nomatch = 0,
+  allow.cartesian = TRUE
+]
+
+key_cols <- c(
+  "name_on_ballot",
+  "first_name",
+  "last_name",
+  "county_name",
+  "county_desc",
+  "contest_name"
+)
+
+setcolorder(
+  candidate_party_exact,
+  c(key_cols, setdiff(names(candidate_party_exact), key_cols))
+)
+
+candidate_party_exact[1:20]
+
+colnames(candidate_party_exact)
+
+```
+
+```{r}
+#more exact with party from == party
+library(data.table)
+
+setDT(candidates_unique)
+setDT(voter_party_only)
 
 
-voter_party_only[, last_initial := substr(last_name, 1, 1)]
+norm_name <- function(x) toupper(gsub("\\s+", " ", trimws(x)))
 
-# Divide
-voter_party_A_M <- voter_party_only[last_initial <= "M"][, !"last_initial"]
-voter_party_N_Z <- voter_party_only[last_initial >= "N"][, !"last_initial"]
+candidates_unique[, `:=`(
+  first_name     = norm_name(first_name),
+  last_name      = norm_name(last_name),
+  county_name    = norm_name(county_name),
+  contest_name   = norm_name(contest_name),
+  name_on_ballot = norm_name(name_on_ballot),
+  party_candidate = norm_name(party_candidate)
+)]
 
-# Check sizes
-nrow(voter_party_A_M)
-nrow(voter_party_N_Z)
+voter_party_only[, `:=`(
+  first_name  = norm_name(first_name),
+  last_name   = norm_name(last_name),
+  county_desc = norm_name(county_desc),
+  party_to    = norm_name(party_to), 
+  party_from  = norm_name(party_from)
+)]
 
 
-write_xlsx(voter_party_A_M, "party_voter_change_A_M.xlsx")
-write_xlsx(voter_party_N_Z, "party_voter_change_N_Z.xlsx")
+all_counties <- sort(unique(voter_party_only$county_desc))
+
+
+cand_expanded <- candidates_unique[
+  ,
+  .(
+    county_name = county_name,
+    party_candidate = party_candidate,
+    county_desc = if (county_name == "ALL COUNTIES") all_counties
+                 else unlist(strsplit(county_name, "\\s*,\\s*"))
+  ),
+  by = .(name_on_ballot, first_name, last_name, contest_name)
+]
+cand_expanded[, county_desc := norm_name(county_desc)]
+
+
+candidate_party_exact2 <- voter_party_only[
+  cand_expanded,
+  on = .(county_desc, first_name, last_name),
+  nomatch = 0,
+  allow.cartesian = TRUE
+]
+
+
+candidate_party_exact2 <- candidate_party_exact2[
+  party_to == party_candidate
+]
+
+
+candidate_party_exact2 <- candidate_party_exact2[party_from != party_to & party_to == party_candidate]
+
+
+key_cols <- c(
+  "name_on_ballot",
+  "first_name",
+  "last_name",
+  "county_name",
+  "county_desc",
+  "contest_name",
+  "party_candidate",
+  "party_from",
+  "party_to",
+  "change_dt",
+  "year_change",
+  "voter_reg_num",
+  "ncid"
+)
+
+
+key_cols <- key_cols[key_cols %in% names(candidate_party_exact2)]
+
+setcolorder(
+  candidate_party_exact2,
+  c(key_cols, setdiff(names(candidate_party_exact2), key_cols))
+)
+
+
+nrow(candidate_party_exact2)
+candidate_party_exact2[1:20]
 ```
 
 
@@ -138,8 +309,8 @@ write_xlsx(voter_party_N_Z, "party_voter_change_N_Z.xlsx")
 library(data.table)
 
 fwrite(
-  voter_party_only,
-  "voter_with_party_changes_2025.csv"
+  candidate_party_exact2,
+  "candidates_party_change2026.csv"
 )
 
 getwd()
