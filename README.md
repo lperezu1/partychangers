@@ -15,12 +15,17 @@ In this project, I use three databases to identify candidates who may have chang
 
 - I then joined the voter registration file with the party change file using county and voter registration number. This allowed names and other voter details to be attached to individuals who changed party affiliation. The party change file unfortunately does not list an NC ID. 
 
-Although the voter registration file is the most up-to-date list of voter registrations, per the NCSBE, about 3,000 records from the party change file did not match to the voter registration file. In these cases, there was no record in the voter registration file with both the same county and voter registration number as those listed in the party change file.
+- Although the voter registration file is the most up-to-date list of voter registrations, per the NCSBE, about 3,000 records from the party change file did not match to the voter registration file. In these cases, there was no record in the voter registration file with both the same county and voter registration number as those listed in the party change file.
 
-I also checked the county-by-county voter registration files maintained by the NCSBE and found no matches there either. All unmatched records reflect voters who changed party affiliation in 2025, making the absence of corresponding voter registration records unclear.
+- I also checked the county-by-county voter registration files maintained by the NCSBE and found no matches there either. All unmatched records reflect voters who changed party affiliation in 2025, making the absence of corresponding voter registration records unclear.
 
 - Despite this, there were still 145,651 matches so the over 3724 is just over 2.5% of the total. The party change file has 149,375 rows.
 - Next, I pulled the candidate list from the NCSBE and filtered and edited it so there was one row per unique candidate. I also grouped counties into a single field listing all counties in which each candidate is running. The original candidate file lists multiple rows per candidate because candidates often run in districts that span multiple counties.
 
 -Finally, I matched the unique candidate list to the dataset created by joining the party change and voter registration files. This match was done using the name as it appears on the ballot, but only when there was also a county match and when the individual’s party affiliation matched the party to which they had changed.
-- This left a database comprised of 156 rows. This dataset needs to be checked manually as there can be instances where there may not in fact be a match. You can see those mathces in the candidates_party_change2026.csv file, which you can also access via this google sheets link: https://docs.google.com/spreadsheets/d/1XqE8iEuPcFNKZeG6BRyrB3eQiuelCUMXLduG_fUF2Ss/edit?usp=sharing 
+- This left a database comprised of 156 rows. This dataset was checked manually and 140 matches were confirmed. You can see those matches in the candidates_party_change2026.csv file, which you can also access via this google sheets link: https://docs.google.com/spreadsheets/d/1XqE8iEuPcFNKZeG6BRyrB3eQiuelCUMXLduG_fUF2Ss/edit?usp=sharing
+
+# Candidates who provided a response not noted in the story 
+
+- Several candidates responded by email to the N&O’s inquiry about why they changed their political affiliation but are not mentioned in the story, which includes only those interviewed by phone or in person. Read their responses here: https://www.documentcloud.org/documents/26464771-b58qc-additional-comments-nbsp-rgb/ 
+ 
