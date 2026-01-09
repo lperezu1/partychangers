@@ -27,5 +27,4 @@ In this project, I use three databases to identify candidates who may have chang
 
 # Candidates who provided a response not noted in the story 
 
-- Several candidates responded by email to the N&O’s inquiry about why they changed their political affiliation but are not mentioned in the story, which includes only those interviewed by phone or in person. Read their responses here:
-- <iframe title="Additional comments:" aria-label="Table" id="datawrapper-chart-b58qC" src="https://datawrapper.dwcdn.net/b58qC/3/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="5831" data-external="1"></iframe><script type="text/javascript">window.addEventListener("message",function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}});</script> 
+- Several candidates responded by email to the N&O’s inquiry about why they changed their political affiliation but are not mentioned in the story, which includes only those interviewed by phone or in person. Read their responses here: https://datawrapper.dwcdn.net/b58qC/3/ 
