@@ -1,10 +1,9 @@
 # partychangers
-In this project, I use three databases to identify candidates who may have changed their party affiliation ahead of next year’s primary and general elections.
-
+In this project, I used three databases to help identify candidates who changed their party affiliation ahead of this year’s primary and general elections.
 
 # The databases are: 
 
-- the statewide voter registration file found here: https://www.ncsbe.gov/results-data/voter-registration-data. According to the North Carolina State Board of Elections, these files "contain the most up-to-date publicly available information for individuals registered or formerly registered to vote in North Carolina, as well as individuals who have attempted to register or have steps left uncompleted in the registration process."  An important note from the file layout documentation  (https://s3.amazonaws.com/dl.ncsbe.gov/data/layout_ncvoter.txt) is that the voter_reg_num is unique only within a county. As a result, voters in different counties can share the same voter registration number 
+- The statewide voter registration file found here: https://www.ncsbe.gov/results-data/voter-registration-data. According to the North Carolina State Board of Elections, these files "contain the most up-to-date publicly available information for individuals registered or formerly registered to vote in North Carolina, as well as individuals who have attempted to register or have steps left uncompleted in the registration process."  An important note from the file layout documentation  (https://s3.amazonaws.com/dl.ncsbe.gov/data/layout_ncvoter.txt) is that the voter_reg_num is unique only within a county. As a result, voters in different counties can share the same voter registration number 
 
 - The other database is the party change file pulled from here: https://dl.ncsbe.gov/?prefix=data/PartyChange/  I pulled the file dated 12/1/2025.That file does not show the names of the people who changed parties. 
 
