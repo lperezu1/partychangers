@@ -27,4 +27,4 @@ In this project, I use three databases to identify candidates who may have chang
 
 # Candidates who provided a response not noted in the story 
 
-- Several candidates responded by email to the N&O’s inquiry about why they changed their political affiliation but are not mentioned in the story, which includes only those interviewed by phone or in person. Read their responses here: https://datawrapper.dwcdn.net/b58qC/3/ 
+- Several legislative candidates responded by email to the N&O’s inquiry about why they changed their political affiliation but are not mentioned in the story, which includes only those interviewed by phone or in person. Read their responses here: https://datawrapper.dwcdn.net/b58qC/3/ 
