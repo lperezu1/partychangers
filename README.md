@@ -8,7 +8,7 @@ In this project, I use three databases to identify candidates who may have chang
 
 - The other database is the party change file pulled from here: https://dl.ncsbe.gov/?prefix=data/PartyChange/  I pulled the file dated 12/1/2025.That file does not show the names of the people who changed parties. 
 
-- The final file is the 2026 candidate list also maintianted by the NCSBE  [https://www.ncsbe.gov/results-data/candidate-lists  ](https://s3.amazonaws.com/dl.ncsbe.gov/Elections/2026/Candidate%20Filing/Candidate_Listing_2026.csv) 
+- The final file is the 2026 candidate list also maintained by the NCSBE  [https://www.ncsbe.gov/results-data/candidate-lists  ](https://s3.amazonaws.com/dl.ncsbe.gov/Elections/2026/Candidate%20Filing/Candidate_Listing_2026.csv) 
  
 # Method 
 - I removed inactive and removed voters from the statewide voter registration file.
