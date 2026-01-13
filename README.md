@@ -22,7 +22,7 @@ In this project, I used three databases to help identify candidates who changed 
 - Next, I pulled the candidate list from the NCSBE and filtered and edited it so there was one row per unique candidate. I also grouped counties into a single field listing all counties in which each candidate is running. The original candidate file lists multiple rows per candidate because candidates often run in districts that span multiple counties.
 
 - Finally, I matched the unique candidate list to the dataset created by joining the party change and voter registration files. This match was done using the name as it appears on the ballot, but only when there was also a county match and when the individual’s party affiliation matched the party to which they had changed.
-- This left a database comprised of 156 rows. This dataset was checked manually and 140 matches were confirmed. You can see those matches in the candidates_party_change2026.csv file, which you can also access via this google sheets link: https://docs.google.com/spreadsheets/d/1XqE8iEuPcFNKZeG6BRyrB3eQiuelCUMXLduG_fUF2Ss/edit?usp=sharing
+- This left a database comprised of 156 rows. This dataset was checked manually and 140 matches were confirmed. You can see those matches in the candidates_party_change2026.csv file. 
 
 # Candidates who provided a response not noted in the story 
 
